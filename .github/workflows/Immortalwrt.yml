@@ -16,7 +16,7 @@ on:
       REPO_BRANCH:
         description: '天灵源码-请选择分支'
         required: true
-        default: 'openwrt-24.10.1'
+        default: 'openwrt-24.10'
         type: choice
         options:
           - 'openwrt-24.10.1'
@@ -133,7 +133,7 @@ jobs:
         cd openwrt
         git tag -l
         git fetch --tags
-        git checkout -b ImmortalWrt-24.10-Stable v24.10.1
+        git checkout -b ImmortalWrt-24.10.1-Stable v24.10.1
     
     - name: 公告
       continue-on-error: true
