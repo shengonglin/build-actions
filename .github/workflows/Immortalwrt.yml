@@ -16,7 +16,7 @@ on:
       REPO_BRANCH:
         description: '天灵源码-请选择分支'
         required: true
-        default: 'master'
+        default: 'openwrt-24.10'
         type: choice
         options:
           - 'openwrt-24.10'
@@ -70,7 +70,7 @@ on:
       UPDATE_FIRMWARE_ONLINE:
         description: '在线更新固/打包aarch64系列为img固件'
         required: false
-        default: 'true'
+        default: 'false'
         type: boolean
 
 
