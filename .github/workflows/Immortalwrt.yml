@@ -127,7 +127,7 @@ jobs:
         bash ${{ env.COMMON_SH }} Diy_feedsconf
         echo "SHANG_CHUAN=true" >> ${GITHUB_ENV}
     
-     - name: 修改版本号
+    - name: 修改版本号
       run: |
         cd openwrt
         git tag -l
