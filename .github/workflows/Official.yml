@@ -21,9 +21,6 @@ on:
         options:
           - 'openwrt-24.10'
           - 'openwrt-23.05'
-          - 'openwrt-22.03'
-          - 'openwrt-21.02'
-          - 'openwrt-19.07'
           - 'master'
           - 'main'
       CONFIG_FILE:
@@ -32,8 +29,7 @@ on:
         default: 'x86_64'
         type: choice
         options:
-          - '1907-phicomm-k3'
-          - 'aarch64'
+          - 'armsr_rootfs_tar_gz'
           - 'phicomm_k3'
           - 'x86_64'
       INFORMATION_NOTICE:
@@ -45,11 +41,11 @@ on:
           - '关闭'
           - 'Telegram'
           - 'Pushplus'
-      RETAIN_MINUTE:
-        description: '清理[X]分钟之后的所有操作记录(最低30)'
+      KEEP_WORKFLOWS:
+        description: '清理workflows,保留[X]个runs不被清理'
         required: true
-        default: '10080'
-      KEEP_LATEST:
+        default: '30'
+      KEEP_RELEASES:
         description: '清理Releases,保留[X]个Releases不被清理'
         required: true
         default: '30'
@@ -80,6 +76,7 @@ on:
         type: boolean
 
 
+# 如若启动定时编译的话,配置文件是设置对应文件夹内的settings.ini文件
 # 定时触发开启开始编译(把下面两个#去掉开启,时间设置请看定时开启编译说明)
 #  schedule:
 #   - cron: 35 18 * * *
@@ -111,7 +108,7 @@ jobs:
     - name: 准备结束
       uses: actions/checkout@v4
       
-    - name: 密匙检测（密匙为空则退出）
+    - name: 检测密匙/文件/版本
       uses: 281677160/common@mishi
 
     - name: 部署编译环境
@@ -119,7 +116,8 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo -E apt-get -qq update -y
-        sudo -E apt-get -qq install -y gawk git gettext libssl-dev xsltproc zip git-core wget curl grep python2.7 python3 python3-pip libpython3-dev
+        sudo -E apt-get -qq install -y gawk git gettext libssl-dev xsltproc zip git-core wget curl grep python2.7 python3 python3-pip libpython3-dev snapd
+        sudo snap install jq
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /${{ env.DIY_WORK }}
         sudo chown $USER:$GROUPS /${{ env.DIY_WORK }}
@@ -129,6 +127,7 @@ jobs:
       run: |
         git clone -q -b "${REPO_BRANCH}" --single-branch "${REPO_URL}" openwrt
         ln -sf /${{ env.DIY_WORK }}/openwrt ${GITHUB_WORKSPACE}/openwrt
+        bash ${{ env.COMMON_SH }} Diy_feedsconf
         echo "SHANG_CHUAN=true" >> ${GITHUB_ENV}
     
     - name: 公告
@@ -144,26 +143,20 @@ jobs:
       if: env.COMPILATION_INFORMATION == 'true'
       uses: 281677160/common@message
     
-    - name: 清理Actions空间
+    - name: 清理releases和workflows
       continue-on-error: true
-      if: env.REPO_TOKEN
-      uses: small-5/delete-workflow-runs@main
-      with:
-        token: ${{ secrets.REPO_TOKEN }}
-        repository: ${{ github.repository }}
-        retain_min: ${{ env.RETAIN_MINUTE }}
-    
-    - name: 清理releases
-      continue-on-error: true
-      if: env.REPO_TOKEN
-      uses: ophub/delete-releases-workflows@main
+      uses: danshui-git/delete-releases-workflows@main
       with:
         delete_releases: true
+        prerelease_option: all
         releases_keep_keyword: targz/Update
-        releases_keep_latest: ${{ env.KEEP_LATEST }}
+        releases_keep_latest: ${{ env.KEEP_RELEASES }}
         delete_tags: true
-        delete_workflows: false
-        workflows_keep_day: 90
+        max_releases_fetch: 300
+        delete_workflows: true
+        workflows_keep_latest: ${{ env.KEEP_WORKFLOWS }}
+        max_workflows_fetch: 300
+        repo: ${{ github.repository }}
         gh_token: ${{ secrets.REPO_TOKEN }}
         
     - name: 触发启动"${{ matrix.target }}"开始编译
