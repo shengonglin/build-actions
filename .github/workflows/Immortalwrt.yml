@@ -132,7 +132,7 @@ jobs:
         cd openwrt
         git tag -l
         git describe --tags
-        git checkout v24.10.2
+        git checkout v24.10.2-2-g7a76298cc5
     - name: 公告
       continue-on-error: true
       uses: 281677160/common@message
