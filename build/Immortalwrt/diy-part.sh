@@ -96,22 +96,17 @@ cat >>$DELETE <<-EOF
 EOF
 
 #!/bin/bash
-# =============== 安全注入 PassWall（优先级最高 + 防覆盖） ===============
 FEEDS_CONF="feeds.conf"
 
-# 1. 确保存在 feeds.conf（优先级高于 feeds.conf.default）
+# 确保 feeds.conf 存在
 [ ! -f " $ FEEDS_CONF" ] && cp feeds.conf.default " $ FEEDS_CONF"
 
-# 2. 检查是否已含 passwall，避免重复添加
+# 添加 PassWall
 if ! grep -q "passwall" " $ FEEDS_CONF" 2>/dev/null; then
-    # 3. 将 PassWall 源插入 feeds.conf 顶部（确保最高优先级）
     {
         echo "src-git passwall_packages https://github.com/OpenWrt-Passwall/openwrt-passwall-packages.git;main"
         echo "src-git passwall_luci https://github.com/OpenWrt-Passwall/openwrt-passwall.git;main"
         cat " $ FEEDS_CONF"
     } > " $ {FEEDS_CONF}.tmp" && mv " $ {FEEDS_CONF}.tmp" " $ FEEDS_CONF"
-    echo "✅ PassWall 源已注入  $ FEEDS_CONF（顶部，优先级最高）"
-else
-    echo "⚠️  PassWall 源已存在，跳过添加"
+    echo "✅ PassWall 已注入"
 fi
-# ========================================================================
