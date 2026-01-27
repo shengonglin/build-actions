@@ -95,18 +95,10 @@ EOF
 cat >>$DELETE <<-EOF
 EOF
 
-#!/bin/bash
-FEEDS_CONF="feeds.conf"
-
-# 确保 feeds.conf 存在
-[ ! -f " $ FEEDS_CONF" ] && cp feeds.conf.default " $ FEEDS_CONF"
-
-# 添加 PassWall
-if ! grep -q "passwall" " $ FEEDS_CONF" 2>/dev/null; then
-    {
-        echo "src-git passwall_packages https://github.com/OpenWrt-Passwall/openwrt-passwall-packages.git;main"
-        echo "src-git passwall_luci https://github.com/OpenWrt-Passwall/openwrt-passwall.git;main"
-        cat " $ FEEDS_CONF"
-    } > " $ {FEEDS_CONF}.tmp" && mv " $ {FEEDS_CONF}.tmp" " $ FEEDS_CONF"
-    echo "✅ PassWall 已注入"
-fi
+# =============== 添加 PassWall 支持 ===============
+echo "src-git passwall_packages https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git;main" >> feeds.conf.tmp
+echo "src-git passwall_luci https://github.com/Openwrt-Passwall/openwrt-passwall.git;main" >> feeds.conf.tmp
+cat feeds.conf.default >> feeds.conf.tmp
+mv feeds.conf.tmp feeds.conf.default
+echo "✅ 已注入 PassWall 源"
+# =================================================
