@@ -95,10 +95,5 @@ EOF
 cat >>$DELETE <<-EOF
 EOF
 
-# =============== 添加 PassWall 支持 ===============
-echo "src-git passwall_packages https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git;main" >> feeds.conf.tmp
-echo "src-git passwall_luci https://github.com/Openwrt-Passwall/openwrt-passwall.git;main" >> feeds.conf.tmp
-cat feeds.conf.default >> feeds.conf.tmp
-mv feeds.conf.tmp feeds.conf.default
-echo "✅ 已注入 PassWall 源"
-# =================================================
+# =============== 添加 作者仓库 ===============
+git clone https://github.com/281677160/openwrt-package package/danshui
