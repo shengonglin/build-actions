@@ -85,3 +85,15 @@ EOF
 # 在线更新时，删除不想保留固件的某个文件，在EOF跟EOF之间加入删除代码，记住这里对应的是固件的文件路径，比如： rm -rf /etc/config/luci
 cat >>$DELETE <<-EOF
 EOF
+
+# 显式禁用非必要且有问题的包
+cat >> .config <<EOF
+CONFIG_PACKAGE_cloudreve=n
+CONFIG_PACKAGE_filebrowser=n
+CONFIG_PACKAGE_luci-app-advanced-reboot=n
+CONFIG_PACKAGE_luci-app-webd=n
+CONFIG_PACKAGE_onionshare-cli=n
+CONFIG_PACKAGE_qmodem=n
+CONFIG_PACKAGE_sub-web=n
+CONFIG_PACKAGE_webd=n
+EOF
