@@ -154,6 +154,7 @@ CONFIG_PACKAGE_luci-proto-ipv6=y
 CONFIG_PACKAGE_luci-proto-ppp=y
 CONFIG_PACKAGE_luci-theme-argon=y
 CONFIG_PACKAGE_microsocks=y
+CONFIG_PACKAGE_mihomo-meta=y
 CONFIG_PACKAGE_miniupnpd-nftables=y
 CONFIG_PACKAGE_mwan3=y
 CONFIG_PACKAGE_nikki=y
